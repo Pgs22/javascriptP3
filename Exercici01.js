@@ -15,3 +15,12 @@ btn_mostra_despertador.onclick = function(){
 btn_tanca_despertador.onclick = function(){
     ref_window.close();
 }
+
+const btn_set_alarma =document.getElementById("btn_set_alarma");
+btn_set_alarma.onclick=function(){
+    let hora = document.getElementById(input_hora).value;
+    let minut = document.getElementById(input_minut).value;
+    let segon = document.getElementById(input_segon).value;
+    ref_window.document.getElementById("div_hora_alarma").innerHTML=hora+":"+minut
+
+}
