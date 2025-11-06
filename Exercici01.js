@@ -6,11 +6,15 @@ let ref_window;
 btn_mostra_despertador.onclick = function(){
     let altura=screen.availHeight /2;
     let amplada=screen.availWidth /2;
-    let with_window=300;
-    let heigth_window=300;
+    let width_window=300;
+    let height_window=300;
     ref_window = window.open("Despertador.html","Despertador",
-        `width=`+with_window+`px,heigth=`+heigth_window+`px,toolbar=no,scrollbars=no, top=`
-        +(altura-heigth_window/2)+`px, left=`+(amplada-with_window/2)`px`);
+        `width=`+width_window+`px,height=`+height_window+`px,toolbar=no,scrollbars=no, top=`
+        +(altura-height_window/2)+`px, left=`+(amplada-width_window/2)`px`);
+    
+    document.setTimeout(function(){
+        ref_window.document.body.style.backgroundColor="blue";
+    }, 1000 );
 }
 btn_tanca_despertador.onclick = function(){
     ref_window.close();
@@ -18,9 +22,9 @@ btn_tanca_despertador.onclick = function(){
 
 const btn_set_alarma =document.getElementById("btn_set_alarma");
 btn_set_alarma.onclick=function(){
-    let hora = document.getElementById(input_hora).value;
-    let minut = document.getElementById(input_minut).value;
-    let segon = document.getElementById(input_segon).value;
+    let hora = document.getElementById(inputHora).value;
+    let minut = document.getElementById(inputMinut).value;
+    let segon = document.getElementById(inputSegon).value;
     ref_window.document.getElementById("div_hora_alarma").innerHTML=hora+":"+minut
 
 }
