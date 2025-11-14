@@ -41,3 +41,43 @@ function mostrarHoraFilla(){
         ":"+hora.getMinutes()+":"+hora.getSeconds();
     }, 1000)
 }
+
+
+//Tpfp veure splice
+llista_numeros= new Array(10);
+for(let k=0;k<llista_mumeros.length;k++ ){
+    llista_numeros[k]=k;
+
+}
+//splice()
+// Elimina en la posicion donde se encuentre que le indicas en el primer digito y el segundo digito elimina todos los que sigan hasta ese fin
+llista_numeros.splice(2,3)
+console.log(llista_numeros);
+llista_mumeros.splice(8,1)
+console.log(llista_numeros)
+//si le pones 0 no elimina
+//tambien se puede usar para añadir elementos:
+llista_numeros.splice(llista_numeros.length,0,"Hola");
+console.log(llista_numeros)
+llista_mumeros.splice(2,10)
+
+
+//creaun array ex2
+
+//guardo la primera cancion
+song1= new Array();
+song1=["titul",".mp3","nom"];
+
+//guardo las canciones añadidas
+reproductor= new Array();
+reproductor[0]=song1;
+console.log(song1)
+console.log(reproductor)
+
+
+
+/*
+for(let k=0;k<llista_mumeros.length;k++ ){
+    llista_numeros[k]=k;
+
+}*/
