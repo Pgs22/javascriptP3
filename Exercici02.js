@@ -22,8 +22,8 @@ for(let k=0;k<reproductor.length;k++ ){
     console.log(k+": "+reproductor[k]);
 }
 
-/* Recorrer el array de listado de canciones y detalle de cada cancion */
+/* Recorrer el array de listado de canciones y detalle de cada cancion
 for(let k=0;k<reproductor.length;k++ ){
     for(let m=0;m<reproductor[k].length;m++ )
-        console.log(m+": "+reproductor[k][m]);
-}
+        console.log("cancion "+m+": "+reproductor[k][m]);
+}*/
