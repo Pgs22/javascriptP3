@@ -8,7 +8,38 @@
 
 </head>
 <body>
+    <div id="llista_propietats"></div>
 
+    <div>
+        <h3> Llistat de àudios disponibles </h3>
+        <select id="LlistatAudios" multiple>    
+            <option value="DRUMC0.WAV" selected> DRUMC0 </option>
+            <option value="FANFARE1.WAV"> FANFARE1 </option>
+            <option value="ek_raat_vilen.mp3"> ek_raat_vilen </option>
+        </select>
+    </div>
+    <div id="controlsAudio">
+        <audio controls id="idAudio">
+            <source src="DRUMC0.WAV" type="audio/wav">
+            <source src="FANFARE1.WAV" type="audio/wav">
+            <source src="ek_raat_vilen.mp3" type="audio/mp3">
+        </audio>
+    </div>
+    
+    <div id="reproductor">
+        <button id="btn_play"> PLAY </button>
+        <button id="btn_pause"> PAUSE </button>
+        <button id="btn_stop"> STOP </button>
+    </div>
+
+    <div id="controlsVolum"></div>        
+        <label>Volum:</label>
+        <input type="range" id="inp_volum_Audio" min="0" max="1" step="0.1" value="1">
+        
+        <button id="btnVolumUp">Pujar Volum</button>
+        <button id="btnVolumDown">Baixar Volum</button>
+        <button id="btnMute">Silenciar</button>
+    </div>
 
 </body>
 </html>
