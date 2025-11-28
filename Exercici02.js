@@ -32,7 +32,10 @@ function generaLlistaPropietats(){
         const nom = reproductor[i][0];
         const extensio = reproductor[i][2];
         const titol = reproductor[i][3];
-        llistat += `<li>Nom: ${nom} (Arxiu: ${extensio} Titol: ${titol}) </li>  `;
+        
+        llistat += `<li>Nom: ${nom} (Arxiu: ${extensio} Titol: ${titol})
+         <button onclick="veureInfo(${i})"> Veure </button>
+        </li> ` ;
     }
     llistat += '</ul>';
     div_llista_propietats.innerHTML = llistat;
@@ -127,6 +130,12 @@ inputVolum.value = idAudio.volume;
  * v. Permet que l’usuari pugui tancar i obrir “Info.html” per veure la informació de
 qualsevol àudio.
 */
+let song;
+function veureInfo(id_song) {
+    song = id_song
+    let info = window.open("info.html", "obre") 
+    console.log(id_song, reproductor[id_song][0]);
+}
 
 
 
