@@ -21,6 +21,9 @@ llista_colors[2] = "pink";
 llista_colors[3] = "red";
 let numeroColor = 0;
 
+/**
+ * teoria
+
 let sta_numeros = new Array(5,3,"Hola");
 llista_numeros.length=10; //añade las posiciones que faltan vacias hasta llegar a 10
 llista_numeros[20]="ultim"; //posicion 20 añado 1
@@ -45,8 +48,11 @@ llista_numeros["titol"]=["llista numeros"];
 llista_numeros["modul"]=" entorn client";
 console.log(llista_numeros);
 console.log(llista_numeros["titol"]);/*Un objeto solo tiene funciones y atributos
-//A cualquier objeto le puedo crear nuevos atributos */
+//A cualquier objeto le puedo crear nuevos atributos 
 console.log(llista_numeros.titol); /*Un objeto solo tiene funciones y atributos
-//A cualquier objeto le puedo crear nuevos atributos */
+//A cualquier objeto le puedo crear nuevos atributos 
 //En un array los numeros son enteros de los indices
-//
+*/
+
+
+
