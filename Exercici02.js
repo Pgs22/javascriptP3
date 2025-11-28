@@ -32,7 +32,7 @@ function generaLlistaPropietats(){
         const nom = reproductor[i][0];
         const extensio = reproductor[i][2];
         const titol = reproductor[i][3];
-        llistat += `<li>Nom: ${nom} (Arxiu: ${extensio})</li> <li>Titol: ${titol}</li>`;
+        llistat += `<li>Nom: ${nom} (Arxiu: ${extensio} Titol: ${titol}) </li>  `;
     }
     llistat += '</ul>';
     div_llista_propietats.innerHTML = llistat;
@@ -126,8 +126,8 @@ inputVolum.value = idAudio.volume;
  * a.
  * v. Permet que l’usuari pugui tancar i obrir “Info.html” per veure la informació de
 qualsevol àudio.
-
 */
+
 
 
 /**EXERICICI 2
