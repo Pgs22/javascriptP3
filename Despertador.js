@@ -1,14 +1,14 @@
 document.body.style.backgroundColor = window.opener.colorFilla;
 //cridem a mostrarHora Filla de la finestra mare
 window.opener.mostrarHoraFilla();
-//Quan el despertador arribi a la hora establerta, fes vibrar el despertador
+//Quan el despertador arribi a l'hora establerta, fes vibrar el despertador
 window.setInterval(checkHoraAlarma, 1000);
 function checkHoraAlarma() {
     let hora_alarma = document.getElementById("div_hora_alarma").innerText;
     let hora_actual = document.getElementById("div_hora_actual").innerText;
     if (hora_actual == hora_alarma && hora_actual != "") {
         window.setInterval(function () {
-            window.document.body.style.backgroundColor = llista_colors[numeroColor % 4]; //para ahorrar un if hacemos agrupaciones de 4 numeros con el resto
+            window.document.body.style.backgroundColor = llista_colors[numeroColor % 4]; //truco!! per no tenir que fer un if, fem agrupacions de 4 numeros amb la resta %
             numeroColor++;
         }, 500)
 
@@ -23,7 +23,6 @@ let numeroColor = 0;
 
 /**
  * teoria
-
 let sta_numeros = new Array(5,3,"Hola");
 llista_numeros.length=10; //añade las posiciones que faltan vacias hasta llegar a 10
 llista_numeros[20]="ultim"; //posicion 20 añado 1

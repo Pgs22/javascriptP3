@@ -15,13 +15,13 @@ reproductor[1]=["FANFARE1.WAV", "wav", "titol"];
 reproductor[2]=["ek_raat_vilen.mp3", "mp3", "titol"];
 //Veure en consola
 console.log(reproductor)
-//Recorrer el array de listado de canciones
+//Recorrer el array de llistat de cançons i veure en consola
 for(let k=0;k<reproductor.length;k++ ){
     console.log(k+": "+reproductor[k]);
 }
 
 /** EXERICICI 2
- * a.
+ * a. En Exercici02.html
  * ii. Mostra el llistat de àudios disponibles (hauràs de tenir l’arxiu i la informació a l’array)
 
 */
@@ -30,8 +30,8 @@ function generaLlistaPropietats(){
     let llistat = '<ul>';
     for (let i = 0; i < reproductor.length; i++) {
         const nom = reproductor[i][0];
-        const extensio = reproductor[i][2];
-        const titol = reproductor[i][3];
+        const extensio = reproductor[i][1];
+        const titol = reproductor[i][2];
         
         llistat += `<li>Nom: ${nom} (Arxiu: ${extensio} Titol: ${titol})
          <button onclick="veureInfo(${i})"> Veure </button>
@@ -45,115 +45,160 @@ generaLlistaPropietats();
 
 
 /**EXERICICI 2
- * a.
+ * a. En Exercici02.html
  * iii. Permet que l’usuari pugui reproduir, aturar, posar en pausa i pujar i baixar el
           volum de qualsevol àudio de l’array. 
 */
 
-const idAudio = document.getElementById("idAudio");
-const selectMusic = document.getElementById("LlistatAudios");
-
+/**
+ * BOTONS MUSIC
+ */
 const btnPlay = document.getElementById("btn_play");
 const btnPause = document.getElementById("btn_pause");
 const btnStop = document.getElementById("btn_stop");
-
+/**
+ * PROPIETATS MUSIC
+ */
+let audio_actual = "";
+const idAudio = document.getElementById("idAudio");
+const selectMusic = document.getElementById("LlistatAudios");
+/**
+ * CONTROLS VOLUM
+ */
 const inputVolum = document.getElementById("inp_volum_Audio");
 const btnVolumUp = document.getElementById("btnVolumUp");
 const btnVolumDown = document.getElementById("btnVolumDown");
 const btnMute = document.getElementById("btnMute");
-
-let audio_actual = idAudio.currentSrc.split('/').pop();
-
-btnPlay.onclick = playMusic;
-btnPause.onclick = pausarMusic;
-btnStop.onclick = aturarMusic;
-
-btnMute.onclick = clk_btn_mute;
-btnVolumUp.onclick = clk_btn_vol_up;
-btnVolumDown.onclick = clk_btn_vol_down;
-inputVolum.oninput = clk_inp_vol_Audio;
-
+inputVolum.value = idAudio.volume; //Iniciar per defecte a 1
+let volumAbansDeSilenciar = 1; //Variable per guardar el volum abans de silenciar
+/**
+ * FUNCIO PLAY
+ */
+btn_play.onclick=playMusic;
 function playMusic() {
-    const nuevaSeleccion = selectMusic.value;
-    if (nuevaSeleccion !== audio_actual) {
-        idAudio.src = nuevaSeleccion;
-        idAudio.load();
-        audio_actual = nuevaSeleccion;
+    //Comprovar si la musica seleccionada es la actual
+    if(selectMusic.value === audio_actual){
+        idAudio.play();
+        return;
+    }    
+    //Comprovar primer si la musica es la selecciona
+    if(idAudio.src!= selectMusic.value){
+        idAudio.src = selectMusic.value;
+        idAudio.load(); //Carga la nova canço
+        audio_actual = selectMusic.value;
     }
-    idAudio.play();
-    console.log(`Reproduint: ${audio_actual}`);
 }
-
+/**
+ * FUNCIO PAUSAR
+ */
+btnPause.onclick = pausarMusic;
 function pausarMusic() {
     idAudio.pause();
-    console.log("Pausa");
 }
-
+/**
+ * FUNCIO ATURAR
+ */
+btnStop.onclick = aturarMusic;
 function aturarMusic() {
     idAudio.pause();
     idAudio.currentTime = 0;
 }
 
-function clk_btn_mute() {
+/**
+ * FUNCIO VOLUM A MUTE
+ */
+btnMute.onclick = clk_btn_mute;
+function clk_btn_mute(){
+    //Es el mateix que fer un if/else i intercanviar, si es true a false, si es false a true
     idAudio.muted = !idAudio.muted;
 }
-
-function clk_btn_vol_up() { 
-    if (idAudio.volume < 1) {
-        idAudio.volume = Math.min(1, idAudio.volume + 0.1);
+/**
+ * FUNCIO VOLUM A UP
+ */
+btnVolumUp.onclick = clk_btn_vol_up;
+function clk_btn_vol_up(){    
+    if(idAudio.volume<=0.9){
+        idAudio.volume += 0.1;
     }
+    //Per aplicar-lo a la barra desliçant del volum
     inputVolum.value = idAudio.volume;
 }
-
-function clk_btn_vol_down() {
-    if (idAudio.volume > 0) {
-        idAudio.volume = Math.max(0, idAudio.volume - 0.1);
+/**
+ * FUNCIO VOLUM A DOWN
+ */
+btnVolumDown.onclick = clk_btn_vol_down;
+function clk_btn_vol_down(){
+    if(idAudio.volume > 0){
+        idAudio.volume -= 0.1;
     }
+    //Per aplicar-lo a la barra desliçant del volum
     inputVolum.value = idAudio.volume;
 }
-
-function clk_inp_vol_Audio() {
+/**
+ * FUNCIO VOLUM A UP/DOWN
+ */
+inputVolum.onchange = clk_inp_vol_Audio;
+function clk_inp_vol_Audio(){
     const nuevoVolumen = parseFloat(inputVolum.value);
     idAudio.volume = nuevoVolumen;
-    
     if (nuevoVolumen > 0) {
         idAudio.muted = false;
-        btnMute.textContent = "Silenciar";
+        volumAbansDeSilenciar = nuevoVolumen;
     }
 }
-//Iiniciar per defecte a 1
-inputVolum.value = idAudio.volume;
 
 
 /**EXERICICI 2
- * a.
+ * a. En Exercici02.html
  * v. Permet que l’usuari pugui tancar i obrir “Info.html” per veure la informació de
 qualsevol àudio.
 */
 let song;
 function veureInfo(id_song) {
     song = id_song
-    let info = window.open("info.html", "obre") 
+    let info = window.open("info.html", "Info") 
     console.log(id_song, reproductor[id_song][0]);
+
+    info.onload = function () { //No es pot cridar directament a la filla sense el onload
+    info.document.getElementById("div_infoSong").innerHTML=reproductor[id_song][0];
+    };
+}
+
+let ref_info;
+
+function veureInfo(id_song) {
+    ref_info = window.open("info.html", "Info");
+
+    ref_info.onload = () => {
+        // Guardamos el índice en la ventana hija
+        ref_info.song = id_song; 
+
+        // También pasamos el array completo
+        ref_info.reproductor = reproductor;
+
+        // Ahora llamamos a una función dentro de info.js
+        ref_info.info();
+    };
 }
 
 
 
+
 /**EXERICICI 2
- * a.
+ * a. En Exercici02.html
  * v. 1p] Mostrar els àudios que l’usuari hagi marcat com a preferit.
 
 */
 
 
 /**EXERICICI 2
- * a.
+ * a. En Exercici02.html
  * vi. 1,5] Permet afegir/treure i ordenar l’àudio d’una llista privada de reproducció.
 */
 
 
 /**EXERICICI 2
- * a.
+ * a. En Exercici02.html
  * vii. 1,5] Permet crear/esborrar vàries llistes de reproducció. 
 
 */
