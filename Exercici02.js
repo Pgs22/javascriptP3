@@ -25,8 +25,8 @@ for(let k=0;k<reproductor.length;k++ ){
  * ii. Mostra el llistat de àudios disponibles (hauràs de tenir l’arxiu i la informació a l’array)
 
 */
-const div_llista_propietats= document.getElementById("llista_propietats");
-function generaLlistaPropietats(){
+const div_llista_audios_disponibles= document.getElementById("llista_audios_disponibles");
+function generaLlistaAudios(){
     let llistat = '<ul>';
     for (let i = 0; i < reproductor.length; i++) {
         const nom = reproductor[i][0];
@@ -39,9 +39,9 @@ function generaLlistaPropietats(){
         </li> `;
     }
     llistat += '</ul>';
-    div_llista_propietats.innerHTML = llistat;
+    div_llista_audios_disponibles.innerHTML = llistat;
 }
-generaLlistaPropietats();
+generaLlistaAudios();
 
 
 
@@ -180,6 +180,7 @@ function veureInfo(id_song) { //parametre d'entrada es la posicio on tenim les d
 function tancaInfo() {
     ref_info.close();
 }
+
 /**EXERICICI 2
  * a. En Exercici02.html
  * v. 1p] Mostrar els àudios que l’usuari hagi marcat com a preferit.
@@ -196,7 +197,7 @@ function afegirFavorit(id_song, marca) { //parametre d'entrada es la posicio on 
     llistaFavorits();
 }
 
-const div_llista_favorits = document.getElementById("llistat_favorits");
+const div_llista_favorits = document.getElementById("llista_favorits");
 function llistaFavorits(){
     let llistat = '<ul>';
     for(let i=0; i < reproductor.length; i++){
@@ -218,7 +219,41 @@ function llistaFavorits(){
  * a. En Exercici02.html
  * vi. 1,5] Permet afegir/treure i ordenar l’àudio d’una llista privada de reproducció.
 */
+let llista = new Array;
+const div_llista_reproduccio = document.getElementById("llista_reproduccio");
+function generaLlistaReproduccio(){
+    let llistat = '<ul>';
+    for (let i = 0; i < reproductor.length; i++) {
+        const nom = reproductor[i][0];
+        llistat += `<li>Nom: ${nom}
+         <button onclick="afegirAudio(${i})"> Afegir </button>
+         <button onclick="treureAudio()"> Treure </button>
+         <button onclick="pujar(${i})">Pujar</button>
+         <button onclick="baixar(${i})">Baixar</button>
+        </li> `;
+    }
+    llistat += '</ul>';
+    div_llista_audios_disponibles.innerHTML = llistat;
+}
+generaLlistaReproduccio();
 
+function afegirAudio(id_song){
+    llista.push(reproduccio[id_song][0]); //Afegeix el nom del audio
+}
+function treureAudio(id_song){
+    let audio = reproductor[id_song][0]; //Guardem el nom del audio a la variable
+    const audioLlista = reproductor.indexOf(audio); //Busca l'audio a la llista de reproduccio
+    if(audioLlista){
+        llista.splice(id_song);
+    }
+}
+function pujar(id_song){ //Falta hacer esta a medio construir resto falta provar..
+    let posOrigen = id_song + 1;
+    let audio = reproduccio[id_song][0];
+}
+function baixar(id_song){
+
+}
 
 /**EXERICICI 2
  * a. En Exercici02.html
