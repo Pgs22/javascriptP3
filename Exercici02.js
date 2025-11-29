@@ -32,9 +32,14 @@ function generaLlistaPropietats(){
         const nom = reproductor[i][0];
         const extensio = reproductor[i][1];
         const titol = reproductor[i][2];
+        const favoritId = `c${i}`; //Afegim el c davant per diferenciar de la resta
         
-        llistat += `<li>Nom: ${nom} (Arxiu: ${extensio} Titol: ${titol})
+        llistat += `<li>Nom: ${nom}
          <button onclick="veureInfo(${i})"> Veure </button>
+         <button onclick="tancaInfo()"> Tancar </button>
+         <button onclick="afegirFavorit(${i})"> Favorit </button>
+         <input type="checkbox" id="${favoritId}" name=${favoritId} value="on" onchange="gestionaFavorit(${i}, this.checked)">
+         <label for="${favoritId}">Favorit</label>
         </li> ` ;
     }
     llistat += '</ul>';
@@ -153,25 +158,21 @@ function clk_inp_vol_Audio(){
  * v. Permet que l’usuari pugui tancar i obrir “Info.html” per veure la informació de
 qualsevol àudio.
 */
-let song;
-function veureInfo(id_song) {
-    song = id_song
-    let info = window.open("info.html", "Info") 
-    console.log(id_song, reproductor[id_song][0]);
-
-    info.onload = function () { //No es pot cridar directament a la filla sense el onload
-    info.document.getElementById("div_infoSong").innerHTML=reproductor[id_song][0];
-    };
-}
 
 let ref_info;
+function veureInfo(id_song) { //parametre d'entrada es la posicio on tenim les dades
+    let altura = screen.availHeight;
+    let amplada = screen.availWidth;
+    let width_window = 600; 
+    let height_window = 400;
 
-function veureInfo(id_song) {
-    ref_info = window.open("info.html", "Info");
+    ref_info = window.open("info.html", "Info",
+        `width=`+width_window+`px,height=`+height_window+`px,toolbar=no,scrollbars=no, top=`
+        +(altura-height_window/2)+`px, left=`+(amplada-width_window/2)+`px`);
 
     ref_info.onload = () => {
         // Guardamos el índice en la ventana hija
-        ref_info.song = id_song; 
+        ref_info.song = id_song;
 
         // También pasamos el array completo
         ref_info.reproductor = reproductor;
@@ -180,16 +181,18 @@ function veureInfo(id_song) {
         ref_info.info();
     };
 }
-
-
-
-
+function tancaInfo() {
+    ref_info.close();
+}
 /**EXERICICI 2
  * a. En Exercici02.html
  * v. 1p] Mostrar els àudios que l’usuari hagi marcat com a preferit.
 
 */
 
+function afegirFavorit(id_song) { //parametre d'entrada es la posicio on tenim les dades
+    reproductor[id_song][3] = "favorit";
+}
 
 /**EXERICICI 2
  * a. En Exercici02.html
@@ -210,144 +213,3 @@ function veureInfo(id_song) {
  * iii. 2p] Permet marcar o desmarcar l’àudio com a preferit.
 */
 
-
-
-
-
-
-
-
-
-
-
-
-//anotaciones
-/**
- * BOTONS MUSIC
- */
-/*
-const btnPlay = document.getElementById("btn_play");
-const btnPause = document.getElementById("btn_pause");
-const btnStop = document.getElementById("btn_stop");
-*/
-
-/**
- * PROPIETATS MUSIC
- */
-/*
-let audio_actual = "";
-const selectMusic = document.getElementById("select_music");
-const idAudio = document.getElementById("idAudio");
-*/
-
-/**
- * FUNCIO PLAY
- */
-/*
-btn_play.onclick=playMusic;
-function playMusic() {
-    //Comprobamos si la musica seleccionada es la actual
-    if(selectMusic.value === audio_actual){
-        idAudio.play();
-        return;
-    }    
-    //Comprobamos primero si la musica es la selecciona
-    if(idAudio.src!= selectMusic.value){
-        idAudio.src = selectMusic.value;
-        idAudio.load(); //Carga la nueva cancion
-        audio_actual = selectMusic.value;
-    }
-}
-*/
-
-/**
- * FUNCIO PAUSAR
- */
-/*
-btn_pause.onclick=pausarMusic;
-function pausarMusic() {
-    idAudio.pause();
-}
-*/
-
-/**
- * FUNCIO ATURAR
- */
-/*
-btn_stop.onclick=aturarMusic;
-function aturarMusic() {
-    idAudio.pause();
-    idAudio.currentTime = 0;
-    idAudio.loop = false;
-}
-    */
-
-/**
- * CONTROLS VOLUM
- */
-// Elementos de control de volumen
-/*
-const inputVolum = document.getElementById("inp_volum_Audio");
-const btnVolumUp = document.getElementById("btnVolumUp");
-const btnVolumDown = document.getElementById("btnVolumDown");
-const btnMute = document.getElementById("btnMute");
-
-// Variable para guardar el volumen antes de silenciar
-let volumAbansDeSilenciar = 1;
-
-*/
-
-/**
- * FUNCIO VOLUM A MUTE
- */
-/*
-btnMute.onclick = clk_btn_mute;
-function clk_btn_mute(){
-    //Es lo mismo que hacer un if/else e intercambiar, si es true a false, si es false a true
-    idAudio.muted = !idAudio.muted;
-}
-*/
-
-/**
- * FUNCIO VOLUM A UP
- */
-/*
-btnVolumUp.onclick = clk_btn_vol_up;
-function clk_btn_vol_up(){    
-    if(idAudio.volume<=0.9){
-        idAudio.volume += 0.1;
-    }
-    //Para aplicarlo a la barra deslizante del volumen
-    inputVolum.value = idAudio.volume;
-}
-*/
-
-/**
- * FUNCIO DVOLUM A DOWN
- */
-
-/*
-btnVolumDown.onclick = clk_btn_vol_down;
-function clk_btn_vol_down(){
-    if(idAudio.volume>=0.1){
-        idAudio.volume -= 0.1;
-    }
-    //Para aplicarlo a la barra deslizante del volumen
-    inputVolum.value = idAudio.volume;
-}
-    */
-
-/**
- * FUNCIO VOLUM A UP/DOWN
- */
-/*
-inputVolum.onchange = clk_inp_vol_Audio;
-function clk_inp_vol_Audio(){
-    const nuevoVolumen = parseFloat(inputVolum.value);
-    idAudio.volume = nuevoVolumen;
-    if (nuevoVolumen > 0) {
-        idAudio.muted = false;
-        volumAbansDeSilenciar = nuevoVolumen;
-    }
-}
-*/
