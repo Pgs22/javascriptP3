@@ -30,17 +30,13 @@ function generaLlistaPropietats(){
     let llistat = '<ul>';
     for (let i = 0; i < reproductor.length; i++) {
         const nom = reproductor[i][0];
-        const extensio = reproductor[i][1];
-        const titol = reproductor[i][2];
-        const favoritId = `c${i}`; //Afegim el c davant per diferenciar de la resta
-        
+        const favoritId = `c${i}`; //Afegim el c davant per diferenciar de la resta quan cridem al id
         llistat += `<li>Nom: ${nom}
          <button onclick="veureInfo(${i})"> Veure </button>
          <button onclick="tancaInfo()"> Tancar </button>
-         <button onclick="afegirFavorit(${i})"> Favorit </button>
-         <input type="checkbox" id="${favoritId}" name=${favoritId} value="on" onchange="gestionaFavorit(${i}, this.checked)">
+         <input type="checkbox" id="${favoritId}" name=${favoritId} value="on" onchange="afegirFavorit(${i}, this.checked)">
          <label for="${favoritId}">Favorit</label>
-        </li> ` ;
+        </li> `;
     }
     llistat += '</ul>';
     div_llista_propietats.innerHTML = llistat;
@@ -187,12 +183,36 @@ function tancaInfo() {
 /**EXERICICI 2
  * a. En Exercici02.html
  * v. 1p] Mostrar els àudios que l’usuari hagi marcat com a preferit.
-
 */
-
-function afegirFavorit(id_song) { //parametre d'entrada es la posicio on tenim les dades
-    reproductor[id_song][3] = "favorit";
+function afegirFavorit(id_song, marca) { //parametre d'entrada es la posicio on tenim les dades i marca boolean del checkbox
+    reproductor[id_song][3] = marca ? "favorit" : ""; //Simplificat amb un ternari
+    /*    //Fem un if else per si el desmarca de favorits 
+    if(marca){
+        reproductor[id_song][3] = "favorit";
+    }else {
+        //reproductor[id_song].splice(3, 1); //Fem servir splice per eliminar la posicio, pero requereix mes recursos, fem una array amb els favorits
+        reproductor[id_song][3] = "";
+    }*/
+    llistaFavorits();
 }
+
+const div_llista_favorits = document.getElementById("llistat_favorits");
+function llistaFavorits(){
+    let llistat = '<ul>';
+    for(let i=0; i < reproductor.length; i++){
+        const favorit = reproductor[i][3] === "favorit"; // Per que entri en if si ha guardat si es true
+        if(favorit){
+            console.log(reproductor[i][0]);
+            const nom = reproductor[i][0];
+            llistat += div_llista_favorits.innerHTML = `
+                <li>Nom: ${nom} </li>
+                `;
+        }
+    }
+    llistat += '</ul>';
+    div_llista_favorits.innerHTML = llistat; // Tot el afegin a la variable dintre del for / if
+}
+
 
 /**EXERICICI 2
  * a. En Exercici02.html
