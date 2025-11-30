@@ -297,7 +297,7 @@ function mostrarLlistaReproduccio(){
  * vii. 1,5] Permet crear/esborrar vàries llistes de reproducció. 
 */
 let btn_crear_llista = document.getElementById("btn_crear_llista");
-btn_btn_crear_llista.onclick = crearLlista;
+btn_btn_crear_llista.onclick = crearLlista();
 const llistes_privades = new Array;
 function crearLlista(){
     let novaLlista = llistes_privades.length;
