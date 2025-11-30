@@ -219,7 +219,8 @@ function llistaFavorits(){
  * a. En Exercici02.html
  * vi. 1,5] Permet afegir/treure i ordenar l’àudio d’una llista privada de reproducció.
 */
-let llista_privada = new Array; // Per gaurdar les llistes privadas
+let llistes_privades = new Array; // Per guarrdar les llistes privadas
+let llista_actual_index = -1; // Farem servir com a index
 const div_llista_reproduccio = document.getElementById("gestionar_llistas_reproduccio");
 function generaLlistaReproduccio(){
     let llistat = '<ul>';
@@ -241,35 +242,54 @@ function generaLlistaReproduccio(){
  * @param {posicio} id_song 
  */
 function afegirAudio(id_song){
-    const audio = reproductor[id_song][0]; //Guardem el nom del audio a la variable
-    let audioLlista = llista_privada.indexOf(audio);
-    if(audioLlista === -1){ // Si no existeix s'afegeix
-        llista_privada.push(audio);
-        mostrarLlistaReproduccio()
+    if (llista_actual_index < 0) {
+        return; 
     }
-}
-function treureAudio(id_song){
+    const audioActiva = llistes_privades[llista_actual_index][1];
     const audio = reproductor[id_song][0];
-    let audioLlista = llista_privada.indexOf(audio); // Si la trova retorna posicio, si no retorna -1, si la posicio es 0 el boolean sería flase
+    let audioLlista = audioActiva.indexOf(audio);
+    
+    if(audioLlista === -1){
+        audioLlista.push(audio);
+        mostrarLlistaReproduccio(); 
+    }
+}
+
+function treureAudio(id_song){
+    if (llista_actual_index === -1) return;
+    const audioActiva = llistes_privades[llista_actual_index][1];
+    const audio = reproductor[id_song][0];
+    let audioLlista = audioActiva.indexOf(audio); // Si la trova retorna posicio, si no retorna -1, si la posicio es 0 el boolean sería flase
+
     if(audioLlista >= 0){
-        llista_privada.splice(audioLlista,1);
+        audioActiva.splice(audioLlista,1);
         mostrarLlistaReproduccio()
     }
 }
+
 function pujar(id_song){ //parametre entrada de la posicio audio
+    if (llista_actual_index === -1){
+        return;
+    }
+    const audioActiva = llistes_privades[llista_actual_index][1];
     let posNova = id_song - 1; // Posicio nova
     if(posNova >= 0){ //Per controlar si hi ha posicio anterior
-        let origen = llista_privada.splice(id_song, 1); //Elimina, retorna eliminat convertit en array i el guardem, i mou posicions d'elements
-        let nomOrigen = origen[0]; //Ens retorna el contingut del array origen esborrat, aixi obtenim sol el valor
-        llista_privada.splice(posNova, 0, nomOrigen); //Guardo element origen al destí, si està ocupat, mou tot a la dreta una posició
+        let origen = audioActiva.splice(id_song, 1); //Elimina, retorna eliminat convertit en array i el guardem, i mou posicions d'elements
+        let nomOrigen = origen[0];//Ens retorna el contingut del array origen esborrat, aixi obtenim sol el valor
+        audioActiva.splice(posNova, 0, nomOrigen);//Guardo element origen al destí, si està ocupat, mou tot a la dreta una posició
     }
-    mostrarLlistaReproduccio()
+    mostrarLlistaReproduccio();
 }
+
 function baixar(id_song){
+    if (llista_actual_index === -1) return;
+    const audioActiva = llistes_privades[llista_actual_index][1];
     let posNova = id_song + 1; // Posicio nova
-    let origen = llista_privada.splice(id_song, 1); //Elimina, retorna eliminat convertit en array i el guardem, i mou posicions d'elements
-    let nomOrigen = origen[0]; //Ens retorna el contingut del array origen esborrat, aixi obtenim sol el valor
-    llista_privada.splice(posNova, 0, nomOrigen); //Guardo element origen al destí, si està ocupat, mou tot a la dreta una posició
+    if(posNova <= audioActiva.length){
+        let origen = audioActiva.splice(id_song, 1); //Elimina, retorna eliminat convertit en array i el guardem, i mou posicions d'elements
+        let nomOrigen = origen[0]; //Ens retorna el contingut del array origen esborrat, aixi obtenim sol el valor
+        audioActiva.splice(posNova, 0, nomOrigen); //Guardo element origen al destí, si està ocupat, mou tot a la dreta una posició
+    }
     mostrarLlistaReproduccio()
 }
 /**
@@ -277,9 +297,13 @@ function baixar(id_song){
  */
 const div_llista_privada_reproduccio = document.getElementById("llista_privada_reproduccio");
 function mostrarLlistaReproduccio(){
+    if (llista_actual_index === -1) {
+        return;
+    }
+    const audioActiva = llistes_privades[llista_actual_index][1];
     let llistat = '<ul>';
-    for(let k = 0; k < llista_privada.length; k++){       
-        const nom = llista_privada[k];
+    for(let k = 0; k < audioActiva.length; k++){ 
+        const nom = audioActiva[k];
         const pujarId = k;
         const baixarId = k;
         llistat += `
@@ -297,32 +321,53 @@ function mostrarLlistaReproduccio(){
  * vii. 1,5] Permet crear/esborrar vàries llistes de reproducció. 
 */
 let btn_crear_llista = document.getElementById("btn_crear_llista");
-btn_btn_crear_llista.onclick = crearLlista();
-const llistes_privades = new Array;
+btn_crear_llista.onclick = crearLlista;
 function crearLlista(){
-    let novaLlista = llistes_privades.length;
-    llista_privada[novaLlista] = "nova_llista";
+    let nouIndex = llistes_privades.length;
+    let nomLlista = `Llista ${nouIndex +1}`;
+    llistes_privades[nouIndex] = [nomLlista, []];
+    llista_actual_index = nouIndex;
+    mostrarLlistesPrivades();
+    mostrarLlistaReproduccio();
 }
 function eliminar(id_llista){
-    llista_privada.splice(id_llista,1);
+    llistes_privades.splice(id_llista,1);
+    if (id_llista === llista_actual_index) {
+        llista_actual_index = llistes_privades.length > 0 ? 0 : -1;
+    }
+    mostrarLlistesPrivades();
+    mostrarLlistaReproduccio();
+}
+
+function seleccionarLlista(id_llista){
+    llista_actual_index = id_llista;
+    mostrarLlistesPrivades();
+    mostrarLlistaReproduccio();
 }
 
 /**
  * mostrar llistes privade creades
  */
 const div_llistes_privades = document.getElementById("llistes_privades");
-function mostrarLlistaReproduccio(){
+function mostrarLlistesPrivades(){
     let llistat = '<ul>';
-    for(let k = 0; k < llistes_privades.length; k++){       
-        const nom = llistes_privades[k];
+    for(let k = 0; k < llistes_privades.length; k++){ 
+         // Acceso a los datos:
+        const llista = llistes_privades[k];
+        const nom = llista[0]; // Nombre en la posición [0]
+        const numCancons = llista[1].length; 
+
         llistat += `
-            <li>Nom: ${nom} </li>
-            <button onclick="eliminar(${k})">Eliminar</button>
+        <li>
+        <div onclick="seleccionarLlista(${k})"> ${nom} </div>
+        <button onclick="eliminar(${k})">Eliminar</button>
+        <button onclick="seleccionarLlista(${k})">Editar/Seleccionar</button>
         </li> `;
-    }
+    } 
     llistat += '</ul>';
     div_llistes_privades.innerHTML = llistat;
 }
+
 
 /**EXERICICI 2
  * b.En Info.html
