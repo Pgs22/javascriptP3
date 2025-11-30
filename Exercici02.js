@@ -235,7 +235,6 @@ function generaLlistaReproduccio(){
     llistat += '</ul>';
     div_llista_reproduccio.innerHTML = llistat;   
 }
-generaLlistaReproduccio();
 
 /**
  * Afegir a la llista de reproduccio
@@ -296,8 +295,34 @@ function mostrarLlistaReproduccio(){
 /**EXERICICI 2
  * a. En Exercici02.html
  * vii. 1,5] Permet crear/esborrar vàries llistes de reproducció. 
-
 */
+let btn_crear_llista = document.getElementById("btn_crear_llista");
+btn_btn_crear_llista.onclick = crearLlista;
+const llistes_privades = new Array;
+function crearLlista(){
+    let novaLlista = llistes_privades.length;
+    llista_privada[novaLlista] = "nova_llista";
+}
+function eliminar(id_llista){
+    llista_privada.splice(id_llista,1);
+}
+
+/**
+ * mostrar llistes privade creades
+ */
+const div_llistes_privades = document.getElementById("llistes_privades");
+function mostrarLlistaReproduccio(){
+    let llistat = '<ul>';
+    for(let k = 0; k < llistes_privades.length; k++){       
+        const nom = llistes_privades[k];
+        llistat += `
+            <li>Nom: ${nom} </li>
+            <button onclick="eliminar(${k})">Eliminar</button>
+        </li> `;
+    }
+    llistat += '</ul>';
+    div_llistes_privades.innerHTML = llistat;
+}
 
 /**EXERICICI 2
  * b.En Info.html
