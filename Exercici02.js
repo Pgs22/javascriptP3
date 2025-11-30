@@ -219,40 +219,78 @@ function llistaFavorits(){
  * a. En Exercici02.html
  * vi. 1,5] Permet afegir/treure i ordenar l’àudio d’una llista privada de reproducció.
 */
-let llista = new Array;
-const div_llista_reproduccio = document.getElementById("llista_reproduccio");
+let llista_privada = new Array; // Per gaurdar les llistes privadas
+const div_llista_reproduccio = document.getElementById("gestionar_llistas_reproduccio");
 function generaLlistaReproduccio(){
     let llistat = '<ul>';
     for (let i = 0; i < reproductor.length; i++) {
         const nom = reproductor[i][0];
+        const afegirId = i; //Per no confondre amb altre id afegim a
+        const treureId = i; //Per no confondre amb altre id afegim t
         llistat += `<li>Nom: ${nom}
-         <button onclick="afegirAudio(${i})"> Afegir </button>
-         <button onclick="treureAudio()"> Treure </button>
-         <button onclick="pujar(${i})">Pujar</button>
-         <button onclick="baixar(${i})">Baixar</button>
+         <button onclick="afegirAudio(${afegirId})"> Afegir </button>
+         <button onclick="treureAudio(${treureId})"> Treure </button>
         </li> `;
     }
     llistat += '</ul>';
-    div_llista_audios_disponibles.innerHTML = llistat;
+    div_llista_reproduccio.innerHTML = llistat;   
 }
 generaLlistaReproduccio();
 
+/**
+ * Afegir a la llista de reproduccio
+ * @param {posicio} id_song 
+ */
 function afegirAudio(id_song){
-    llista.push(reproduccio[id_song][0]); //Afegeix el nom del audio
-}
-function treureAudio(id_song){
-    let audio = reproductor[id_song][0]; //Guardem el nom del audio a la variable
-    const audioLlista = reproductor.indexOf(audio); //Busca l'audio a la llista de reproduccio
-    if(audioLlista){
-        llista.splice(id_song);
+    const audio = reproductor[id_song][0]; //Guardem el nom del audio a la variable
+    let audioLlista = llista_privada.indexOf(audio);
+    if(audioLlista === -1){ // Si no existeix s'afegeix
+        llista_privada.push(audio);
+        mostrarLlistaReproduccio()
     }
 }
-function pujar(id_song){ //Falta hacer esta a medio construir resto falta provar..
-    let posOrigen = id_song + 1;
-    let audio = reproduccio[id_song][0];
+function treureAudio(id_song){
+    const audio = reproductor[id_song][0];
+    let audioLlista = llista_privada.indexOf(audio); // Si la trova retorna posicio, si no retorna -1, si la posicio es 0 el boolean sería flase
+    if(audioLlista >= 0){
+        llista_privada.splice(audioLlista,1);
+        mostrarLlistaReproduccio()
+    }
+}
+function pujar(id_song){ //parametre entrada de la posicio audio
+    let posNova = id_song - 1; // Posicio nova
+    if(posNova >= 0){ //Per controlar si hi ha posicio anterior
+        let origen = llista_privada.splice(id_song, 1); //Elimina, retorna eliminat convertit en array i el guardem, i mou posicions d'elements
+        let nomOrigen = origen[0]; //Ens retorna el contingut del array origen esborrat, aixi obtenim sol el valor
+        llista_privada.splice(posNova, 0, nomOrigen); //Guardo element origen al destí, si està ocupat, mou tot a la dreta una posició
+    }
+    mostrarLlistaReproduccio()
 }
 function baixar(id_song){
-
+    let posNova = id_song + 1; // Posicio nova
+    let origen = llista_privada.splice(id_song, 1); //Elimina, retorna eliminat convertit en array i el guardem, i mou posicions d'elements
+    let nomOrigen = origen[0]; //Ens retorna el contingut del array origen esborrat, aixi obtenim sol el valor
+    llista_privada.splice(posNova, 0, nomOrigen); //Guardo element origen al destí, si està ocupat, mou tot a la dreta una posició
+    mostrarLlistaReproduccio()
+}
+/**
+ * Mostrar llista privada de reproducció
+ */
+const div_llista_privada_reproduccio = document.getElementById("llista_privada_reproduccio");
+function mostrarLlistaReproduccio(){
+    let llistat = '<ul>';
+    for(let k = 0; k < llista_privada.length; k++){       
+        const nom = llista_privada[k];
+        const pujarId = k;
+        const baixarId = k;
+        llistat += `
+            <li>Nom: ${nom} </li>
+            <button onclick="pujar(${pujarId})">Pujar</button>
+            <button onclick="baixar(${baixarId})">Baixar</button>
+        </li> `;
+    }
+    llistat += '</ul>';
+    div_llista_privada_reproduccio.innerHTML = llistat;
 }
 
 /**EXERICICI 2
