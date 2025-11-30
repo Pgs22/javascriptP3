@@ -236,7 +236,6 @@ function generaLlistaReproduccio(){
     llistat += '</ul>';
     div_llista_reproduccio.innerHTML = llistat;   
 }
-
 /**
  * Afegir a la llista de reproduccio
  * @param {posicio} id_song 
@@ -247,10 +246,10 @@ function afegirAudio(id_song){
     }
     const audioActiva = llistes_privades[llista_actual_index][1];
     const audio = reproductor[id_song][0];
-    let audioLlista = audioActiva.indexOf(audio);
+    let existeix = audioActiva.indexOf(audio);
     
-    if(audioLlista === -1){
-        audioLlista.push(audio);
+    if(existeix === -1){
+        audioActiva.push(audio);
         mostrarLlistaReproduccio(); 
     }
 }
@@ -320,6 +319,7 @@ function mostrarLlistaReproduccio(){
  * a. En Exercici02.html
  * vii. 1,5] Permet crear/esborrar vàries llistes de reproducció. 
 */
+let llistatComplet = false; // Per si esborra totes les llistes
 let btn_crear_llista = document.getElementById("btn_crear_llista");
 btn_crear_llista.onclick = crearLlista;
 function crearLlista(){
@@ -327,6 +327,12 @@ function crearLlista(){
     let nomLlista = `Llista ${nouIndex +1}`;
     llistes_privades[nouIndex] = [nomLlista, []];
     llista_actual_index = nouIndex;
+
+    //Comprovació si hi ha alguna llista creada per afegir la llista reproduccio
+    if (llistatComplet === false) {
+        generaLlistaReproduccio();
+        llistatComplet = true;
+    }
     mostrarLlistesPrivades();
     mostrarLlistaReproduccio();
 }
