@@ -197,6 +197,7 @@ function tancaInfo() {
 */
 function afegirFavorit(id_song, marca) { //parametre d'entrada es la posicio on tenim les dades i marca boolean del checkbox
     reproductor[id_song][3] = marca ? "favorit" : ""; //Simplificat amb un ternari
+    llistaFavorits();
     /*    //Abans Fem un if else per si el desmarca de favorits 
     if(marca){
         reproductor[id_song][3] = "favorit";
@@ -204,16 +205,59 @@ function afegirFavorit(id_song, marca) { //parametre d'entrada es la posicio on 
         //reproductor[id_song].splice(3, 1); //Fem servir splice per eliminar la posicio, pero requereix mes recursos, fem una array amb els favorits
         reproductor[id_song][3] = "";
     }*/
-    //També s'plica si està oberta la finestra
-    if (ref_info && !ref_info.closed) {
-        //Aquest checkbox es crea a la funcio veureInfo() a la finestra info.html
-        const checkboxEmergente = ref_info.document.getElementById('favorit_check');
-        if (checkboxEmergente) {
-            checkboxEmergente.checked = marca;
+    //Per sincronitzar amb checkbox de info.html i que també s'pliqui si està oberta la finestra
+    if (!ref_info || ref_info.closed) { 
+        return;
+    }
+    //Aquest checkbox es crea a la funcio veureInfo() a la finestra info.html
+    let checkboxEmergente = ref_info.document.getElementById('favorit_check');
+    if (checkboxEmergente) {
+        checkboxEmergente.checked = marca;
+        return; 
+    }
+
+    const intervalId = setInterval(() => {
+        const checkboxReintento = ref_info.document.getElementById('favorit_check');
+        if (checkboxReintento) {
+            checkboxReintento.checked = marca;
+            clearInterval(intervalId); 
         }
-    }    
-    llistaFavorits();
-}
+        if (ref_info.closed) {
+            clearInterval(intervalId);
+        }
+                
+    }, 100);
+            
+
+    setTimeout(() => {
+        clearInterval(intervalId);
+    }, 3000);
+
+
+/*
+    window.setInterval(function(){
+        if (ref_info && !ref_info.closed) {
+            let encontrado = false;
+            //Aquest checkbox es crea a la funcio veureInfo() a la finestra info.html
+            let checkboxEmergente = ref_info.document.getElementById('favorit_check');
+            //Aquest checkbox es crea a la funcio veureInfo() a la finestra info.html
+            if (checkboxEmergente) {
+                checkboxEmergente.checked = marca;
+                encontrado = true;
+            }
+            if (!encontrado) {              
+                const checkboxReintento = ref_info.document.getElementById('favorit_check');                
+                if (checkboxReintento) {
+                    checkboxReintento.checked = marca;
+                    clearInterval(intervalId); 
+                }
+            };
+            setTimeout(() => clearInterval(intervalId), 3000);        
+        }
+    }, 1000);*/
+
+}    
+
 
 const div_llista_favorits = document.getElementById("llista_favorits");
 function llistaFavorits(){
