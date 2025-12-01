@@ -3,7 +3,7 @@
  * EXERICICI 2
  * Crea i programa un reproductor de música amb les següents funcionalitats dividides en dos html:
  * a. En Exercici02.html
- * i. Hauràs de definir un array amb informació sobre el nom de diferents arxius d’àudio ,
+ * i. Hauràs de definir un array amb informació sobre el nom de diferents arxius d’àudio,
     la seva extensió i el seu títol. 
 */
 
@@ -22,7 +22,8 @@ for(let k=0;k<reproductor.length;k++ ){
 
 /** EXERICICI 2
  * a. En Exercici02.html
- * ii. Mostra el llistat de àudios disponibles (hauràs de tenir l’arxiu i la informació a l’array)
+ * ii. Mostra el llistat de àudios disponibles (hauràs de tenir l’arxiu i 
+ * la informació a l’array)
 
 */
 const div_llista_audios_disponibles= document.getElementById("llista_audios_disponibles");
@@ -30,11 +31,11 @@ function generaLlistaAudios(){
     let llistat = '<ul>';
     for (let i = 0; i < reproductor.length; i++) {
         const nom = reproductor[i][0];
-        const favoritId = `c${i}`; //Afegim el c davant per diferenciar de la resta quan cridem al id
+        const favoritId = `c${i}`; //Afegim el c davant (El nom al id i no començi per un número)
         llistat += `<li>Nom: ${nom}
          <button onclick="veureInfo(${i})"> Veure </button>
          <button onclick="tancaInfo()"> Tancar </button>
-         <input type="checkbox" id="${favoritId}" name=${favoritId} value="on" onchange="afegirFavorit(${i}, this.checked)">
+         <input type="checkbox" id="${favoritId}" value="on" onchange="afegirFavorit(${i}, this.checked)">
          <label for="${favoritId}">Favorit</label>
         </li> `;
     }
@@ -164,19 +165,28 @@ function veureInfo(id_song) { //parametre d'entrada es la posicio on tenim les d
 
     ref_info = window.open("info.html", "Info",
         `width=`+width_window+`px,height=`+height_window+`px,toolbar=no,scrollbars=no, top=`
-        +(altura-height_window/2)+`px, left=`+(amplada-width_window/2)+`px`);
+        +(altura-height_window/2)+`px, left=`+(amplada-width_window/2)+`px`);  
 
-    ref_info.onload = () => {
-        // Guardamos el índice en la ventana hija
-        ref_info.song = id_song;
-
-        // También pasamos el array completo
-        ref_info.reproductor = reproductor;
-
-        // Ahora llamamos a una función dentro de info.js
-        ref_info.info();
-    };
+    window.setTimeout(function(){ //Ejecuta el codigo una vez con el retraso 200ms
+        let nom = reproductor[id_song];
+        ref_info.document.getElementById("div_infoSong").innerHTML=`
+        <h3>Informació de la cançó</h3>
+        Nom: ${nom[0]} <br>
+        Extensió: ${nom[1]} <br>
+        Títol: ${nom[2]}
+        `;
+        const esFavorit = reproductor[id_song][3] === "favorit"; 
+        ref_info.document.getElementById("div_favorit_control").innerHTML = `
+            <h2>Estat de Preferit</h2>
+            <label for="favorit_check">Marcar com a preferit:</label>
+            <input type="checkbox" 
+                id="favorit_check" 
+                ${esFavorit ? 'checked' : ''} 
+                onchange="canviarEstatFavorit(${id_song}, this.checked)">
+        `;
+    }, 200 ); // Si no hacemos retraso, veureInfo() no puede cargar porque no está preparado al pulsar el botón    
 }
+
 function tancaInfo() {
     ref_info.close();
 }
@@ -187,25 +197,33 @@ function tancaInfo() {
 */
 function afegirFavorit(id_song, marca) { //parametre d'entrada es la posicio on tenim les dades i marca boolean del checkbox
     reproductor[id_song][3] = marca ? "favorit" : ""; //Simplificat amb un ternari
-    /*    //Fem un if else per si el desmarca de favorits 
+    /*    //Abans Fem un if else per si el desmarca de favorits 
     if(marca){
         reproductor[id_song][3] = "favorit";
     }else {
         //reproductor[id_song].splice(3, 1); //Fem servir splice per eliminar la posicio, pero requereix mes recursos, fem una array amb els favorits
         reproductor[id_song][3] = "";
     }*/
+    //També s'plica si està oberta la finestra
+    if (ref_info && !ref_info.closed) {
+        //Aquest checkbox es crea a la funcio veureInfo() a la finestra info.html
+        const checkboxEmergente = ref_info.document.getElementById('favorit_check');
+        if (checkboxEmergente) {
+            checkboxEmergente.checked = marca;
+        }
+    }    
     llistaFavorits();
 }
 
 const div_llista_favorits = document.getElementById("llista_favorits");
 function llistaFavorits(){
     let llistat = '<ul>';
-    for(let i=0; i < reproductor.length; i++){
+    for(let i = 0; i < reproductor.length; i++){
         const favorit = reproductor[i][3] === "favorit"; // Per que entri en if si ha guardat si es true
         if(favorit){
             console.log(reproductor[i][0]);
             const nom = reproductor[i][0];
-            llistat += div_llista_favorits.innerHTML = `
+            llistat += `
                 <li>Nom: ${nom} </li>
                 `;
         }
@@ -358,10 +376,8 @@ const div_llistes_privades = document.getElementById("llistes_privades");
 function mostrarLlistesPrivades(){
     let llistat = '<ul>';
     for(let k = 0; k < llistes_privades.length; k++){ 
-         // Acceso a los datos:
         const llista = llistes_privades[k];
-        const nom = llista[0]; // Nombre en la posición [0]
-        const numCancons = llista[1].length; 
+        const nom = llista[0]; // Posicio
 
         llistat += `
         <li>
@@ -381,4 +397,22 @@ function mostrarLlistesPrivades(){
  * ii. 1] Mostra si l’àudio s’ha marcat com a preferit o no.
  * iii. 2p] Permet marcar o desmarcar l’àudio com a preferit.
 */
+
+
+/**
+ * Afegit a la funció ja creada en aquest fixer: veureInfo(id_song)
+ * Per sincronitzar el marcat del favorit (finestra principal) i preferit (finestra info):
+ * Aquesta funció es crida al moment de afegirFavorit()
+ * I canvis a la funció afegirFavorit() per aplicar els canvis a info.html
+ */ 
+ function canviarEstatFavorit(id_song, marca) {
+    afegirFavorit(id_song, marca); 
+    //Aquest check del principal existeix si es marca com a favorit a la funció afegirfavorit()
+    const checkboxPrincipal = document.getElementById(`c${id_song}`);
+
+    if (checkboxPrincipal) {
+        checkboxPrincipal.checked = marca;
+    }
+}
+
 
