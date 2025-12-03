@@ -36,7 +36,7 @@ function generaLlistaAudios(){
          <button onclick="veureInfo(${i})"> Veure </button>
          <button onclick="tancaInfo()"> Tancar </button>
          <input type="checkbox" id="${favoritId}" value="on" onchange="afegirFavorit(${i}, this.checked)">
-         <label for="${favoritId}">Favorit</label>
+         <label for="${favoritId}">Preferit</label>
         </li> `;
     }
     llistat += '</ul>';
@@ -174,12 +174,12 @@ function veureInfo(id_song) { //parametre d'entrada es la posicio on tenim les d
         Extensió: ${nom[1]} <br>
         Títol: ${nom[2]}
         `;
-        const esFavorit = reproductor[id_song][3] === "favorit"; 
+        const esFavorit = reproductor[id_song][3] === "preferit"; 
         ref_info.document.getElementById("div_favorit_control").innerHTML = `
             <h2>Estat de Preferit</h2>
-            <label for="favorit_check">Marcar com a preferit:</label>
+            <label for="preferit_check">Marcar com a preferit:</label>
             <input type="checkbox" 
-                id="favorit_check" 
+                id="preferit_check" 
                 ${esFavorit ? 'checked' : ''} 
                 onchange="canviarEstatFavorit(${id_song}, this.checked)">
         `;
@@ -198,17 +198,16 @@ let esPreferit = false; //Si canvia a true, es canvia a principal
 //Aquest checkbox es crea a la funcio veureInfo() a la finestra info.html
 let checkboxEmergente = ref_info.document.getElementById('favorit_check'); 
 function afegirFavorit(id_song, marca) { //parametre d'entrada es la posicio on tenim les dades i marca boolean del checkbox
-    reproductor[id_song][3] = marca ? "favorit" : ""; //Simplificat amb un ternari
+    reproductor[id_song][3] = marca ? "preferit" : ""; //Simplificat amb un ternari
     llistaFavorits();
     //Per sincronitzar amb checkbox de info.html i que també s'pliqui si està oberta la finestra
     if (!ref_info || ref_info.closed) { 
         return;
     }
-    
+    //Aquest checkbox es crea a la funcio veureInfo() a la finestra info.html
     let checkboxEmergente = ref_info.document.getElementById('favorit_check');
     if (checkboxEmergente) {
         checkboxEmergente.checked = marca;
-        esPreferit = true;
         return; 
     }
 
@@ -216,7 +215,6 @@ function afegirFavorit(id_song, marca) { //parametre d'entrada es la posicio on 
         const checkboxReintento = ref_info.document.getElementById('favorit_check');
         if (checkboxReintento) {
             checkboxReintento.checked = marca;
-            esPreferit = true;
             clearInterval(intervalId); 
         }
         if (ref_info.closed) {
@@ -237,7 +235,7 @@ const div_llista_favorits = document.getElementById("llista_favorits");
 function llistaFavorits(){
     let llistat = '<ul>';
     for(let i = 0; i < reproductor.length; i++){
-        const favorit = reproductor[i][3] === "favorit"; // Per que entri en if si ha guardat si es true
+        const favorit = reproductor[i][3] === "preferit"; // Per que entri en if si ha guardat si es true
         if(favorit){
             console.log(reproductor[i][0]);
             const nom = reproductor[i][0];
@@ -426,6 +424,7 @@ function mostrarLlistesPrivades(){
  function canviarEstatFavorit(id_song, marca) {
     afegirFavorit(id_song, marca); 
     //Aquest check del principal existeix si es marca com a favorit a la funció afegirfavorit()
+    
     const checkboxPrincipal = document.getElementById(`c${id_song}`);
 
     if (checkboxPrincipal) {
