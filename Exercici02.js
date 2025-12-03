@@ -105,7 +105,6 @@ function aturarMusic() {
     idAudio.pause();
     idAudio.currentTime = 0;
 }
-
 /**
  * FUNCIO VOLUM A MUTE
  */
@@ -232,29 +231,6 @@ function afegirFavorit(id_song, marca) { //parametre d'entrada es la posicio on 
     setTimeout(() => {
         clearInterval(intervalId);
     }, 3000);
-
-
-/*
-    window.setInterval(function(){
-        if (ref_info && !ref_info.closed) {
-            let encontrado = false;
-            //Aquest checkbox es crea a la funcio veureInfo() a la finestra info.html
-            let checkboxEmergente = ref_info.document.getElementById('favorit_check');
-            //Aquest checkbox es crea a la funcio veureInfo() a la finestra info.html
-            if (checkboxEmergente) {
-                checkboxEmergente.checked = marca;
-                encontrado = true;
-            }
-            if (!encontrado) {              
-                const checkboxReintento = ref_info.document.getElementById('favorit_check');                
-                if (checkboxReintento) {
-                    checkboxReintento.checked = marca;
-                    clearInterval(intervalId); 
-                }
-            };
-            setTimeout(() => clearInterval(intervalId), 3000);        
-        }
-    }, 1000);*/
 
 }    
 
