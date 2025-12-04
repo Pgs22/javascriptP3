@@ -35,14 +35,16 @@ function generaLlistaAudios(){
         llistat += `<li>Nom: ${nom}
          <button onclick="veureInfo(${i})"> Veure </button>
          <button onclick="tancaInfo()"> Tancar </button>
-         <input type="checkbox" id="${favoritId}" value="on" onchange="afegirFavorit(${i}, this.checked)">
+         <input type="checkbox" id="${favoritId}" onchange="afegirFavorit(${i}, this.checked)">
          <label for="${favoritId}">Preferit</label>
         </li> `;
     }
     llistat += '</ul>';
     div_llista_audios_disponibles.innerHTML = llistat;
 }
-generaLlistaAudios();
+if (window.opener === null) {
+    generaLlistaAudios();
+}
 
 
 
@@ -71,12 +73,17 @@ const inputVolum = document.getElementById("inp_volum_Audio");
 const btnVolumUp = document.getElementById("btnVolumUp");
 const btnVolumDown = document.getElementById("btnVolumDown");
 const btnMute = document.getElementById("btnMute");
-inputVolum.value = idAudio.volume; //Iniciar per defecte a 1
+
+if (idAudio && inputVolum) {
+    idAudio.volume = 0.5; 
+    inputVolum.value = idAudio.volume; //Iniciar per defecte a 1 si existeix
+}
+
 let volumAbansDeSilenciar = 1; //Variable per guardar el volum abans de silenciar
 /**
  * FUNCIO PLAY
  */
-btn_play.onclick=playMusic;
+btnPlay.onclick=playMusic;
 function playMusic() {
     //Comprovar si la musica seleccionada es la actual
     if(selectMusic.value === audio_actual){
@@ -156,6 +163,7 @@ qualsevol àudio.
 */
 
 let ref_info;
+let checkboxEmergente;
 function veureInfo(id_song) { //parametre d'entrada es la posicio on tenim les dades
     let altura = screen.availHeight;
     let amplada = screen.availWidth;
@@ -166,7 +174,8 @@ function veureInfo(id_song) { //parametre d'entrada es la posicio on tenim les d
         `width=`+width_window+`px,height=`+height_window+`px,toolbar=no,scrollbars=no, top=`
         +(altura-height_window/2)+`px, left=`+(amplada-width_window/2)+`px`);  
 
-    window.setTimeout(function(){ //Ejecuta el codigo una vez con el retraso 200ms
+    window.setTimeout(function(){ //Executa el codi una vegada amb retard de 200ms
+        checkboxEmergente = ref_info.document.getElementById('preferit_check');
         let nom = reproductor[id_song];
         ref_info.document.getElementById("div_infoSong").innerHTML=`
         <h3>Informació de la cançó</h3>
@@ -174,16 +183,19 @@ function veureInfo(id_song) { //parametre d'entrada es la posicio on tenim les d
         Extensió: ${nom[1]} <br>
         Títol: ${nom[2]}
         `;
-        const esFavorit = reproductor[id_song][3] === "preferit"; 
+        //En el input, afegim un ternari per marcar el checkbox si es true
+        //Afegim al onchange la funcio per aplicar els canvis a la finestra principal si el marquem preferit a la ref_info, per això fem referencia amb window.opener
+        const esFavorit = reproductor[id_song][3] === "preferit";
         ref_info.document.getElementById("div_favorit_control").innerHTML = `
             <h2>Estat de Preferit</h2>
             <label for="preferit_check">Marcar com a preferit:</label>
             <input type="checkbox" 
                 id="preferit_check" 
                 ${esFavorit ? 'checked' : ''} 
-                onchange="canviarEstatFavorit(${id_song}, this.checked)">
+                onchange="window.opener.canviarEstatFavorit(${id_song}, this.checked)">
         `;
-    }, 200 ); // Si no hacemos retraso, veureInfo() no puede cargar porque no está preparado al pulsar el botón    
+        console.log("viene de principal marcado",reproductor[id_song][3])
+    }, 200 ); // Si no fem retard, veureInfo() no pot caregar per que no està preparat al pulsar el botó
 }
 
 function tancaInfo() {
@@ -194,40 +206,10 @@ function tancaInfo() {
  * a. En Exercici02.html
  * v. 1p] Mostrar els àudios que l’usuari hagi marcat com a preferit.
 */
-let esPreferit = false; //Si canvia a true, es canvia a principal
 //Aquest checkbox es crea a la funcio veureInfo() a la finestra info.html
-let checkboxEmergente = ref_info.document.getElementById('favorit_check'); 
 function afegirFavorit(id_song, marca) { //parametre d'entrada es la posicio on tenim les dades i marca boolean del checkbox
     reproductor[id_song][3] = marca ? "preferit" : ""; //Simplificat amb un ternari
     llistaFavorits();
-    //Per sincronitzar amb checkbox de info.html i que també s'pliqui si està oberta la finestra
-    if (!ref_info || ref_info.closed) { 
-        return;
-    }
-    //Aquest checkbox es crea a la funcio veureInfo() a la finestra info.html
-    let checkboxEmergente = ref_info.document.getElementById('favorit_check');
-    if (checkboxEmergente) {
-        checkboxEmergente.checked = marca;
-        return; 
-    }
-
-    const intervalId = setInterval(() => {
-        const checkboxReintento = ref_info.document.getElementById('favorit_check');
-        if (checkboxReintento) {
-            checkboxReintento.checked = marca;
-            clearInterval(intervalId); 
-        }
-        if (ref_info.closed) {
-            clearInterval(intervalId);
-        }
-                
-    }, 100);
-            
-
-    setTimeout(() => {
-        clearInterval(intervalId);
-    }, 3000);
-
 }    
 
 
@@ -245,7 +227,7 @@ function llistaFavorits(){
         }
     }
     llistat += '</ul>';
-    div_llista_favorits.innerHTML = llistat; // Tot el afegin a la variable dintre del for / if
+    div_llista_favorits.innerHTML = llistat; // Tot el afegin a la variable dintre del for/if
 }
 
 
@@ -421,14 +403,13 @@ function mostrarLlistesPrivades(){
  * Aquesta funció es crida al moment de afegirFavorit()
  * I canvis a la funció afegirFavorit() per aplicar els canvis a info.html
  */ 
+let esPreferitInfo = false;
  function canviarEstatFavorit(id_song, marca) {
-    afegirFavorit(id_song, marca); 
-    //Aquest check del principal existeix si es marca com a favorit a la funció afegirfavorit()
-    
-    const checkboxPrincipal = document.getElementById(`c${id_song}`);
-
-    if (checkboxPrincipal) {
-        checkboxPrincipal.checked = marca;
+    if (marca) {
+        reproductor[id_song][3] = "preferit"; 
+        esPreferitInfo = true;
+    } else {
+        reproductor[id_song][3] = "";
     }
 }
 
