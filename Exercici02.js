@@ -31,13 +31,13 @@ function generaLlistaAudios(){
 
     let llistat = '<ul>';
     for (let i = 0; i < reproductor.length; i++) {
-        const esCancionFavorita = reproductor[i][3] === "preferit";
+        const esFavorita = reproductor[i][3] === "preferit";
         const nom = reproductor[i][0];
         const favoritId = `c${i}`; //Afegim el c davant (El nom al id i no començi per un número)
         llistat += `<li>Nom: ${nom}
          <button onclick="veureInfo(${i})"> Veure </button>
          <button onclick="tancaInfo()"> Tancar </button>
-         <input type="checkbox" id="${favoritId}" ${esCancionFavorita ? 'checked' : ''} onchange="afegirFavorit(${i}, this.checked)">
+         <input type="checkbox" id="${favoritId}" ${esFavorita ? 'checked' : ''} onchange="afegirFavorit(${i}, this.checked)">
          <label for="${favoritId}">Preferit</label>
         </li> `;
     }
@@ -45,7 +45,7 @@ function generaLlistaAudios(){
     div_llista_audios_disponibles.innerHTML = llistat;
 }
 
-if (window.opener === null || esFavorit == true) {
+if (window.opener === null) {
     generaLlistaAudios();
 }
 
@@ -202,6 +202,9 @@ function veureInfo(id_song) { //parametre d'entrada es la posicio on tenim les d
 }
 
 function tancaInfo() {
+
+    
+    window.opener.generaLlistaAudios();
     ref_info.close();
 }
 
