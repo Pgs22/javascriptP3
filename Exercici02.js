@@ -28,6 +28,7 @@ for(let k=0;k<reproductor.length;k++ ){
 */
 const div_llista_audios_disponibles= document.getElementById("llista_audios_disponibles");
 function generaLlistaAudios(){
+    const esCancionFavorita = reproductor[i][3] === "preferit";
     let llistat = '<ul>';
     for (let i = 0; i < reproductor.length; i++) {
         const nom = reproductor[i][0];
@@ -35,14 +36,15 @@ function generaLlistaAudios(){
         llistat += `<li>Nom: ${nom}
          <button onclick="veureInfo(${i})"> Veure </button>
          <button onclick="tancaInfo()"> Tancar </button>
-         <input type="checkbox" id="${favoritId}" onchange="afegirFavorit(${i}, this.checked)">
+         <input type="checkbox" id="${favoritId}" ${esCancionFavorita ? 'checked' : ''} onchange="afegirFavorit(${i}, this.checked)">
          <label for="${favoritId}">Preferit</label>
         </li> `;
     }
     llistat += '</ul>';
     div_llista_audios_disponibles.innerHTML = llistat;
 }
-if (window.opener === null) {
+
+if (window.opener === null || esFavorit == true) {
     generaLlistaAudios();
 }
 
@@ -403,14 +405,14 @@ function mostrarLlistesPrivades(){
  * Aquesta funció es crida al moment de afegirFavorit()
  * I canvis a la funció afegirFavorit() per aplicar els canvis a info.html
  */ 
-let esPreferitInfo = false;
- function canviarEstatFavorit(id_song, marca) {
+
+function canviarEstatFavorit(id_song, marca) {
     if (marca) {
         reproductor[id_song][3] = "preferit"; 
-        esPreferitInfo = true;
     } else {
         reproductor[id_song][3] = "";
     }
+    window.opener.generaLlistaAudios();
 }
 
 
