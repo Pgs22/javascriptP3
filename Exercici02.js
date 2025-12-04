@@ -164,7 +164,9 @@ qualsevol àudio.
 //Afegim botó per tancar i obrir “Info.html” a la funció generaLlistaAudios()
 
 let ref_info;
+let id_song_actual;
 function veureInfo(id_song) { //parametre d'entrada es la posicio on tenim les dades
+    id_song_actual = id_song;
     let altura = screen.availHeight;
     let amplada = screen.availWidth;
     let width_window = 600; 
@@ -174,22 +176,10 @@ function veureInfo(id_song) { //parametre d'entrada es la posicio on tenim les d
         `width=`+width_window+`px,height=`+height_window+`px,toolbar=no,scrollbars=no, top=`
         +(altura-height_window/2)+`px, left=`+(amplada-width_window/2)+`px`);  
 
-    window.setTimeout(function(){ //Executa el codi una vegada amb retard de 200ms
-            let nom = reproductor[id_song];
-            ref_info.document.getElementById("div_infoSong").innerHTML=`
-            <h3>Informació de la cançó</h3>
-            Nom: ${nom[0]} <br>
-            Extensió: ${nom[1]} <br>
-            Títol: ${nom[2]} <br>
-            Favorit: ${nom[3]}
-            `;
 
-        ref_info.document.getElementById("div_favorit_control").innerHTML = `
-            <button onclick="window.opener.afegirFavorit(${id_song})"> Marcar favorit </button>
-            <button onclick="window.opener.eliminarFavorit(${id_song})"> Desmarcar favorit </button>
-            </ul>
-        `;
-    }, 1000 ); // Si no fem retard, veureInfo() no pot carregar per que no està preparat encara
+    window.setTimeout(function(){ 
+        actualitzarInfo(id_song_actual); // Crida a la nova funció per generar el contingut
+    }, 1000 );
 }
 
 
@@ -389,10 +379,34 @@ function mostrarLlistesPrivades(){
 function afegirFavorit(id_song) { //parametre d'entrada es la posicio on tenim la cançó
     reproductor[id_song][3] = "preferit";
     llistaFavorits();
+    if (ref_info && !ref_info.closed) { // <--- Afegeix això!
+        actualitzarInfo(id_song); 
+    }
 }   
 
 function eliminarFavorit(id_song) { //parametre d'entrada es la posicio on tenim la cançó
     reproductor[id_song][3] = "";
     llistaFavorits();
-}    
+    if (ref_info && !ref_info.closed) { // <--- Afegeix això!
+        actualitzarInfo(id_song); 
+    }
+}
+
+//Per afegir a la finestra info.html el canvi del favorit
+function actualitzarInfo(id_song) {
+    let nom = reproductor[id_song];
+    
+    ref_info.document.getElementById("div_infoSong").innerHTML = `
+        <h3>Informació de la cançó</h3>
+        Nom: ${nom[0]} <br>
+        Extensió: ${nom[1]} <br>
+        Títol: ${nom[2]} <br>
+        Favorit: ${nom[3]}
+        `;
+
+    ref_info.document.getElementById("div_favorit_control").innerHTML = `
+        <button onclick="window.opener.afegirFavorit(${id_song})"> Marcar favorit </button>
+        <button onclick="window.opener.eliminarFavorit(${id_song})"> Desmarcar favorit </button>
+    `;
+}
 
