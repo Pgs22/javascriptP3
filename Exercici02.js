@@ -28,9 +28,10 @@ for(let k=0;k<reproductor.length;k++ ){
 */
 const div_llista_audios_disponibles= document.getElementById("llista_audios_disponibles");
 function generaLlistaAudios(){
-    const esCancionFavorita = reproductor[i][3] === "preferit";
+
     let llistat = '<ul>';
     for (let i = 0; i < reproductor.length; i++) {
+        const esCancionFavorita = reproductor[i][3] === "preferit";
         const nom = reproductor[i][0];
         const favoritId = `c${i}`; //Afegim el c davant (El nom al id i no començi per un número)
         llistat += `<li>Nom: ${nom}
