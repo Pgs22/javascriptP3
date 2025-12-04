@@ -10,9 +10,9 @@
 //Array reproductor para guardar las canciones
 const reproductor = new Array();
 //Informació del llistat de cançons
-reproductor[0]=["DRUMC0.WAV", "wav", "titol"];
-reproductor[1]=["FANFARE1.WAV", "wav", "titol"];
-reproductor[2]=["ek_raat_vilen.mp3", "mp3", "titol"];
+reproductor[0]=["DRUMC0.WAV", "wav", "titol", ""];
+reproductor[1]=["FANFARE1.WAV", "wav", "titol", ""];
+reproductor[2]=["ek_raat_vilen.mp3", "mp3", "titol", ""];
 //Veure en consola
 console.log(reproductor)
 //Recorrer el array de llistat de cançons i veure en consola
@@ -26,19 +26,16 @@ for(let k=0;k<reproductor.length;k++ ){
  * la informació a l’array)
 
 */
+
 const div_llista_audios_disponibles= document.getElementById("llista_audios_disponibles");
 function generaLlistaAudios(){
 
     let llistat = '<ul>';
     for (let i = 0; i < reproductor.length; i++) {
-        const esFavorita = reproductor[i][3] === "preferit";
         const nom = reproductor[i][0];
-        const favoritId = `c${i}`; //Afegim el c davant (El nom al id i no començi per un número)
         llistat += `<li>Nom: ${nom}
          <button onclick="veureInfo(${i})"> Veure </button>
-         <button onclick="tancaInfo()"> Tancar </button>
-         <input type="checkbox" id="${favoritId}" ${esFavorita ? 'checked' : ''} onchange="afegirFavorit(${i}, this.checked)">
-         <label for="${favoritId}">Preferit</label>
+         <button onclick="tancaInfo()"> Tancar </button>         
         </li> `;
     }
     llistat += '</ul>';
@@ -48,7 +45,6 @@ function generaLlistaAudios(){
 if (window.opener === null) {
     generaLlistaAudios();
 }
-
 
 
 /**EXERICICI 2
@@ -165,8 +161,9 @@ function clk_inp_vol_Audio(){
 qualsevol àudio.
 */
 
+//Afegim botó per tancar i obrir “Info.html” a la funció generaLlistaAudios()
+
 let ref_info;
-let checkboxEmergente;
 function veureInfo(id_song) { //parametre d'entrada es la posicio on tenim les dades
     let altura = screen.availHeight;
     let amplada = screen.availWidth;
@@ -178,33 +175,25 @@ function veureInfo(id_song) { //parametre d'entrada es la posicio on tenim les d
         +(altura-height_window/2)+`px, left=`+(amplada-width_window/2)+`px`);  
 
     window.setTimeout(function(){ //Executa el codi una vegada amb retard de 200ms
-        checkboxEmergente = ref_info.document.getElementById('preferit_check');
-        let nom = reproductor[id_song];
-        ref_info.document.getElementById("div_infoSong").innerHTML=`
-        <h3>Informació de la cançó</h3>
-        Nom: ${nom[0]} <br>
-        Extensió: ${nom[1]} <br>
-        Títol: ${nom[2]}
-        `;
-        //En el input, afegim un ternari per marcar el checkbox si es true
-        //Afegim al onchange la funcio per aplicar els canvis a la finestra principal si el marquem preferit a la ref_info, per això fem referencia amb window.opener
-        const esFavorit = reproductor[id_song][3] === "preferit";
+            let nom = reproductor[id_song];
+            ref_info.document.getElementById("div_infoSong").innerHTML=`
+            <h3>Informació de la cançó</h3>
+            Nom: ${nom[0]} <br>
+            Extensió: ${nom[1]} <br>
+            Títol: ${nom[2]} <br>
+            Favorit: ${nom[3]}
+            `;
+
         ref_info.document.getElementById("div_favorit_control").innerHTML = `
-            <h2>Estat de Preferit</h2>
-            <label for="preferit_check">Marcar com a preferit:</label>
-            <input type="checkbox" 
-                id="preferit_check" 
-                ${esFavorit ? 'checked' : ''} 
-                onchange="window.opener.canviarEstatFavorit(${id_song}, this.checked)">
+            <button onclick="window.open.afegirFavorit(${id_song})"> Marcar favorit </button>
+            <button onclick="window.open.eliminarFavorit(${id_song})"> Desmarcar favorit </button>
+            </ul>
         `;
-        console.log("viene de principal marcado",reproductor[id_song][3])
-    }, 200 ); // Si no fem retard, veureInfo() no pot caregar per que no està preparat al pulsar el botó
+    }, 1000 ); // Si no fem retard, veureInfo() no pot carregar per que no està preparat encara
 }
 
-function tancaInfo() {
 
-    
-    window.opener.generaLlistaAudios();
+function tancaInfo() {
     ref_info.close();
 }
 
@@ -212,18 +201,11 @@ function tancaInfo() {
  * a. En Exercici02.html
  * v. 1p] Mostrar els àudios que l’usuari hagi marcat com a preferit.
 */
-//Aquest checkbox es crea a la funcio veureInfo() a la finestra info.html
-function afegirFavorit(id_song, marca) { //parametre d'entrada es la posicio on tenim les dades i marca boolean del checkbox
-    reproductor[id_song][3] = marca ? "preferit" : ""; //Simplificat amb un ternari
-    llistaFavorits();
-}    
-
-
 const div_llista_favorits = document.getElementById("llista_favorits");
 function llistaFavorits(){
     let llistat = '<ul>';
     for(let i = 0; i < reproductor.length; i++){
-        const favorit = reproductor[i][3] === "preferit"; // Per que entri en if si ha guardat si es true
+        const favorit = reproductor[i][3] === "preferit"; // Per que entri al següent if, si es preferit
         if(favorit){
             console.log(reproductor[i][0]);
             const nom = reproductor[i][0];
@@ -232,10 +214,9 @@ function llistaFavorits(){
                 `;
         }
     }
-    llistat += '</ul>';
-    div_llista_favorits.innerHTML = llistat; // Tot el afegin a la variable dintre del for/if
+    llistat += '</ul>'; // Ho afegin a la variable per tancar llistat
+    div_llista_favorits.innerHTML = llistat; // per canviar valor de fora la funció amb tota la llista feta
 }
-
 
 /**EXERICICI 2
  * a. En Exercici02.html
@@ -248,11 +229,9 @@ function generaLlistaReproduccio(){
     let llistat = '<ul>';
     for (let i = 0; i < reproductor.length; i++) {
         const nom = reproductor[i][0];
-        const afegirId = i; //Per no confondre amb altre id afegim a
-        const treureId = i; //Per no confondre amb altre id afegim t
         llistat += `<li>Nom: ${nom}
-         <button onclick="afegirAudio(${afegirId})"> Afegir </button>
-         <button onclick="treureAudio(${treureId})"> Treure </button>
+         <button onclick="afegirAudio(${i})"> Afegir </button>
+         <button onclick="treureAudio(${i})"> Treure </button>
         </li> `;
     }
     llistat += '</ul>';
@@ -405,18 +384,15 @@ function mostrarLlistesPrivades(){
 
 /**
  * Afegit a la funció ja creada en aquest fixer: veureInfo(id_song)
- * Per sincronitzar el marcat del favorit (finestra principal) i preferit (finestra info):
- * Aquesta funció es crida al moment de afegirFavorit()
- * I canvis a la funció afegirFavorit() per aplicar els canvis a info.html
  */ 
 
-function canviarEstatFavorit(id_song, marca) {
-    if (marca) {
-        reproductor[id_song][3] = "preferit"; 
-    } else {
-        reproductor[id_song][3] = "";
-    }
-    window.opener.generaLlistaAudios();
-}
+function afegirFavorit(id_song) { //parametre d'entrada es la posicio on tenim la cançó
+    reproductor[id_song][3] = "preferit";
+    llistaFavorits();
+}   
 
+function eliminarFavorit(id_song) { //parametre d'entrada es la posicio on tenim la cançó
+    reproductor[id_song][3] = "";
+    llistaFavorits();
+}    
 
