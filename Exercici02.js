@@ -90,7 +90,7 @@ function playMusic() {
         return;
     }    
     //Comprovar primer si la musica es la selecciona
-    if(idAudio.src!= selectMusic.value){
+    if(idAudio.src != selectMusic.value){
         idAudio.src = selectMusic.value;
         idAudio.load(); //Carga la nova canço
         audio_actual = selectMusic.value;
@@ -185,8 +185,8 @@ function veureInfo(id_song) { //parametre d'entrada es la posicio on tenim les d
             `;
 
         ref_info.document.getElementById("div_favorit_control").innerHTML = `
-            <button onclick="window.open.afegirFavorit(${id_song})"> Marcar favorit </button>
-            <button onclick="window.open.eliminarFavorit(${id_song})"> Desmarcar favorit </button>
+            <button onclick="window.opener.afegirFavorit(${id_song})"> Marcar favorit </button>
+            <button onclick="window.opener.eliminarFavorit(${id_song})"> Desmarcar favorit </button>
             </ul>
         `;
     }, 1000 ); // Si no fem retard, veureInfo() no pot carregar per que no està preparat encara
